@@ -1,0 +1,61 @@
+type: object
+required:
+  - order_uuid
+  - user_uuid
+  - part_uuids
+  - total_price
+  - transaction_uuid
+  - payment_method
+  - status
+properties:
+  order_uuid:
+    type: string
+    format: uuid
+    description: Уникальный UUID созданного заказа
+    example: "6ba7b810-9dad-11d4-a716-446655440000"
+  user_uuid:
+    type: string
+    format: uuid
+    description: UUID пользователя, создавшего заказ
+    example: "550e8400-e29b-41d4-a716-446655440000"
+  part_uuids:
+    type: array
+    description: Список UUID деталей в заказе
+    items:
+      type: string
+      format: uuid
+    minItems: 1
+    example:
+      - "123e4567-e89b-12d3-a456-426614174000"
+  total_price:
+    type: number
+    format: double
+    description: Итоговая стоимость заказа
+    minimum: 0
+    example: 123.45
+  transaction_uuid:
+    type: string
+    format: uuid
+    nullable: true
+    description: UUID транзакции (если оплачен)
+    example: "7ca7b911-aebb-22e2-91c5-11d05fe531d9"
+  payment_method:
+    type: string
+    nullable: true
+    description: Способ оплаты (если оплачен)
+    enum:
+      - UNKNOWN
+      - CARD
+      - SBP
+      - CREDIT_CARD
+      - INVESTOR_MONEY
+    example: "CARD"
+  status:
+    type: string
+    description: Статус заказа
+    enum:
+      - PENDING_PAYMENT
+      - PAID
+      - CANCELLED
+    example: "PAID"
+additionalProperties: false

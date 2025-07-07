@@ -13,6 +13,8 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	orderV1 "github.com/Akbar-cmd/raketa-factory/shared/pkg/openapi/order/v1"
 )
 
 const (
