@@ -20,7 +20,6 @@ import (
 
 const grpcPort = 50052
 
-// paymentService реализует контракт PaymentService
 type PaymentService struct {
 	paymentV1.UnimplementedPaymentServiceServer
 }
