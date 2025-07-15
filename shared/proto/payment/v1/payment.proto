@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package payment.v1;
+
+option go_package = "github.com/Akbar-cmd/raketa-factory/shared/pkg/proto/payment/v1;payment_v1";
+
+// PaymentService предоставляет API для симуляции работы платежного шлюза
+service PaymentService {
+  // PayOrder обрабатывает команду на оплату и возвращает transaction_uuid
+  rpc PayOrder(PayOrderRequest) returns (PayOrderResponse);
+}
+
+// PayOrderRequest запрос на uuid заказа, пользователя и выбранный способ оплаты
+message PayOrderRequest {
+  // uuid заказа
+  string order_uuid = 1;
+  // uuid пользователя, который инициирует оплату
+  string user_uuid = 2;
+  // Выбранный способ оплаты
+  PaymentMethod payment_method = 3;
+}
+
+// PayOrderResponse возвращает uuid транзакции оплаты
+message PayOrderResponse {
+  // uuid транзакции оплаты
+  string transaction_uuid = 1;
+}
+
+// Перечисление методов платежа (один из)
+enum PaymentMethod {
+  // Неизвестный способ
+  UNKNOWN = 0;
+  // Банковская карта
+  CARD = 1;
+  // Система быстрых платежей
+  SBP = 2;
+  // Кредитная карта
+  CREDIT_CARD = 3;
+  // Деньги инвестора (внутренний метод)
+  INVESTOR_MONEY = 4;
+}
