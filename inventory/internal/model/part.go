@@ -12,9 +12,9 @@ type Part struct {
 	Dimensions    Dimensions
 	Manufacturer  Manufacturer
 	Tags          []string
-	Metadata      map[string]Value
+	Metadata      Metadata
 	CreatedAt     time.Time
-	UpdatedAt     time.Time
+	UpdatedAt     *time.Time
 }
 
 type PartsFilter struct {
@@ -25,14 +25,14 @@ type PartsFilter struct {
 	Tags                  []string
 }
 
-type Category int32
+type Category string
 
 const (
-	CategoryUnknown  Category = 0
-	CategoryEngine   Category = 1
-	CategoryFuel     Category = 2
-	CategoryPorthole Category = 3
-	CategoryWing     Category = 4
+	CategoryUnknown  Category = "UNKNOWN"
+	CategoryEngine   Category = "ENGINE"
+	CategoryFuel     Category = "FUEL"
+	CategoryPorthole Category = "PORTHOLE"
+	CategoryWing     Category = "WING"
 )
 
 type Dimensions struct {
@@ -48,7 +48,7 @@ type Manufacturer struct {
 	Website string
 }
 
-type Value struct {
+type Metadata struct {
 	StringValue *string
 	Int64Value  *int64
 	DoubleValue *float64

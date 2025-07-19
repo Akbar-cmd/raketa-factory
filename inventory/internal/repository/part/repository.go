@@ -1,7 +1,6 @@
 package part
 
 import (
-	"log"
 	"sync"
 
 	def "github.com/Akbar-cmd/raketa-factory/inventory/internal/repository"
@@ -21,15 +20,4 @@ func NewRepository() *repository {
 	}
 	repo.initParts()
 	return repo
-}
-
-// initParts загружает сгенерированные данные в память репозитория.
-func (r *repository) initParts() {
-	initial := generateParts()
-
-	for _, part := range initial {
-		r.data[part.Uuid] = part
-	}
-
-	log.Printf("✅ Инициализировано %d запчастей в inventory", len(initial))
 }
