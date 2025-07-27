@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
@@ -9,49 +8,20 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/google/uuid"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
-	"google.golang.org/grpc/status"
 
+	paymentV1API "github.com/Akbar-cmd/raketa-factory/payment/internal/api/payment/v1"
+	paymentService "github.com/Akbar-cmd/raketa-factory/payment/internal/service/payment"
 	paymentV1 "github.com/Akbar-cmd/raketa-factory/shared/pkg/proto/payment/v1"
 )
 
-const grpcPort = 50052
-
-type PaymentService struct {
-	paymentV1.UnimplementedPaymentServiceServer
-}
-
-// NewPaymentService конструктор сервиса оплаты
-func NewPaymentService() *PaymentService {
-	return &PaymentService{}
-}
-
-// PayOrder обрабатывает запрос оплаты заказа, генерирует transaction_uuid и логирует результат
-func (s *PaymentService) PayOrder(_ context.Context, req *paymentV1.PayOrderRequest) (*paymentV1.PayOrderResponse, error) {
-	// Валидация полей запроса
-	if req.GetOrderUuid() == "" || req.GetUserUuid() == "" {
-		return nil, status.Errorf(codes.InvalidArgument, "order_uuid and user_uuid must be set")
-	}
-
-	// Генерация UUID транзакции
-	txnUUID := uuid.NewString()
-
-	// Логирование
-	log.Printf("Оплата прошла успешно, \n transaction_uuid: %s\n order_uuid: %s\n user_uuid: %s\n method: %s\n", txnUUID, req.GetOrderUuid(), req.GetUserUuid(), req.GetPaymentMethod().String())
-
-	return &paymentV1.PayOrderResponse{
-		TransactionUuid: txnUUID,
-	}, nil
-}
+const grpcAddr = 50052
 
 func main() {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcAddr))
 	if err != nil {
-		log.Printf("failed to listen: %v\n", err)
-		return
+		log.Printf("failed to listen: %v", err)
 	}
 	defer func() {
 		if cerr := lis.Close(); cerr != nil {
@@ -59,14 +29,20 @@ func main() {
 		}
 	}()
 
-	// Создание и регистрация gRPC-сервера
+	// Создаем gRPC сервер
 	s := grpc.NewServer()
-	paymentV1.RegisterPaymentServiceServer(s, NewPaymentService())
+
+	// Регистрируем наш сервис
+	service := paymentService.NewService()
+	api := paymentV1API.NewAPI(service)
+
+	paymentV1.RegisterPaymentServiceServer(s, api)
+
+	// Включаем рефлексию для отладки
 	reflection.Register(s)
 
-	// Запуск сервера в горутине
 	go func() {
-		log.Printf("🚀 gRPC server listening on %d\n", grpcPort)
+		log.Printf("🚀 gRPC server listening on %d\n", grpcAddr)
 		err = s.Serve(lis)
 		if err != nil {
 			log.Printf("failed to serve: %v\n", err)
