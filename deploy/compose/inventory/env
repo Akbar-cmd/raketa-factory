@@ -1,0 +1,5 @@
+MONGO_INITDB_DATABASE=inventory-service #Имя базы данных, которая будет создана при запуске
+MONGO_INITDB_ROOT_USERNAME=user # Имя root-пользователя MongoDB
+MONGO_INITDB_ROOT_PASSWORD=password # Пароль для root-пользователя
+MONGO_PORT=27017
+MONGO_AUTH_DB=admin

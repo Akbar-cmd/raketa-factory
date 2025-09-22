@@ -1,0 +1,7 @@
+POSTGRES_DB=order-service
+POSTGRES_USER=demo
+POSTGRES_PASSWORD=demopass
+POSTGRES_PORT=5432
+
+DB_URI=postgres://demo:demopass@localhost:5432/postgres
+MIGRATIONS_DIR=migrations
